@@ -8,18 +8,22 @@
       <el-button type="info" @click="logout">退出</el-button>
     </el-header>
     <el-container>
-      <el-aside width="200px">
+      <el-aside :width="isCollapse ? '64px' : '200px'">
+        <div class="toggle-button" @click="toggleCollapse">|||</div>
         <el-menu
           background-color="#333744"
           text-color="#fff"
-          active-text-color="#ffd04b"
+          active-text-color="#409eff"
+          :unique-opened="true"
+          :collapse="isCollapse"
+          :collapse-transition="false"
         >
           <!-- 一级菜单 -->
           <el-submenu :index=" item.id + ''" v-for="item in menulist" :key="item.id">
             <!-- 一级菜单模板 -->
             <template slot="title">
               <!-- 图标 -->
-              <i class="el-icon-location"></i>
+              <i :class="menuIcons[item.id]"></i>
               <!-- 文本 -->
               <span>{{ item.authName }}</span>
             </template>
@@ -28,7 +32,7 @@
               <!-- 二级菜单模板 -->
               <template slot="title">
                 <!-- 图标 -->
-                <i class="el-icon-location"></i>
+                <i class="el-icon-menu"></i>
                 <!-- 文本 -->
                 <span>{{ subItem.authName }}</span>
               </template>
@@ -46,7 +50,18 @@ export default {
   data() {
     return {
       // 左侧菜单数据
-      menulist: []
+      menulist: [],
+      // 左侧菜单图标对象
+      menuIcons: {
+        '125': 'el-icon-s-custom',
+        '103': 'el-icon-view',
+        '101': 'el-icon-goods',
+        '102': 'el-icon-document',
+        '145': 'el-icon-data-line'
+      },
+      // 侧边栏是否折叠
+      isCollapse: false
+           
     }
   },
   created() {
@@ -61,7 +76,9 @@ export default {
       const {data: res} =await this.$http.get('menus')
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.menulist = res.data
-
+    },
+    toggleCollapse() {
+      this.isCollapse = !this.isCollapse
     }
   }
 }
@@ -90,6 +107,18 @@ export default {
 }
 .el-aside {
   background-color: #333744;
+  .el-menu {
+    border-right: none;
+  }
+  .toggle-button {
+    color: #fff;
+    text-align: center;
+    font-size: 10px;
+    line-height: 24px;
+    background-color: #4a5064;
+    letter-spacing: 0.3em;
+    cursor: pointer;
+  }
 }
 .el-main {
   background-color: #eaedf1;
