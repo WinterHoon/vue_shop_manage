@@ -17,6 +17,8 @@
           :unique-opened="true"
           :collapse="isCollapse"
           :collapse-transition="false"
+          router
+          :default-active="activePath"
         >
           <!-- 一级菜单 -->
           <el-submenu :index=" item.id + ''" v-for="item in menulist" :key="item.id">
@@ -28,7 +30,8 @@
               <span>{{ item.authName }}</span>
             </template>
             <!-- 二级菜单 -->
-            <el-menu-item :index=" subItem.id + '' " v-for="subItem in item.children" :key="subItem.id">
+            <el-menu-item :index="'/' + subItem.path" v-for="subItem in item.children" :key="subItem.id"
+            @click="saveNavState('/' + subItem.path)">
               <!-- 二级菜单模板 -->
               <template slot="title">
                 <!-- 图标 -->
@@ -40,7 +43,10 @@
           </el-submenu>
         </el-menu>
       </el-aside>
-      <el-main>Main</el-main>
+      <el-main>
+        <!-- 路由占位符 -->
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -60,12 +66,20 @@ export default {
         '145': 'el-icon-data-line'
       },
       // 侧边栏是否折叠
-      isCollapse: false
+      isCollapse: false,
+      // 被激活的链接地址
+      activePath: ''
            
     }
   },
   created() {
     this.getMenuList()
+    console.log('home created');
+    this.activePath = window.sessionStorage.getItem('activePath')
+  },
+  activated() {
+    console.log('home activated');
+    
   },
   methods: {
     logout() {
@@ -77,8 +91,14 @@ export default {
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.menulist = res.data
     },
+    // 点击按钮，切换菜单与展开
     toggleCollapse() {
       this.isCollapse = !this.isCollapse
+    },
+    // 保存链接的激活状态
+    saveNavState(activePath) {
+      window.sessionStorage.setItem('activePath', activePath)
+      this.activePath = activePath
     }
   }
 }
