@@ -44,7 +44,7 @@
             ></el-switch>
           </template>
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" width="200px">
           <template v-slot="slot">
             <el-button
               type="primary"
@@ -264,7 +264,7 @@ export default {
       this.queryInfo.pagenum = newPage
       this.getUserList()
     },
-    // 监听 switch 开关的状态
+    // 监听 用户状态 switch 开关的状态
     async userStateChanged(userinfo) {
       console.log(userinfo)
       const { data: res } = await this.$http.put(
@@ -286,7 +286,7 @@ export default {
         if (!valid) return
         const { data: res } = await this.$http.post('users', this.addForm)
         if (res.meta.status !== 201) {
-          this.$message.error('添加用户失败！')
+          return this.$message.error('添加用户失败！')
         }
         this.$message.success('添加用户成功！')
         // 隐藏添加用户对话框
@@ -303,6 +303,7 @@ export default {
         return this.$message.error('查询用户信息失败！')
       }
       this.editForm = res.data
+      console.log(res.data);
       // this.$message.success()
       this.editUserDialogVisible = true
     },
