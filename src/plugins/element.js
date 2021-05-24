@@ -25,8 +25,11 @@ import {
   Dialog,
   MessageBox,
   Tag,
-  Tree
+  Tree,
+  Select,
+  Option
 } from 'element-ui'
+import { options } from 'less'
 
 Vue.use(Button)
 Vue.use(Form)
@@ -52,6 +55,8 @@ Vue.use(Pagination)
 Vue.use(Dialog)
 Vue.use(Tag)
 Vue.use(Tree)
+Vue.use(Select)
+Vue.use(Option)
 // 导入弹框提示组件,这个组件需要全局挂载
 Vue.prototype.$message = Message
 
