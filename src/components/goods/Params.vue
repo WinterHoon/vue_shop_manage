@@ -227,7 +227,8 @@ export default {
       cateProps: {
         value: 'cat_id',
         label: 'cat_name',
-        children: 'children'
+        children: 'children',
+        expandTrigger: 'hover'
       },
       // 级联选择框双向绑定到的数组
       selectedCateKeys: [],

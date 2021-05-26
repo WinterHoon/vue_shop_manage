@@ -28,7 +28,6 @@ import {
   Tree,
   Select,
   Option,
-  Cascader,
   Alert,
   Cascader,
   Tabs,
@@ -63,7 +62,6 @@ Vue.use(Select)
 Vue.use(Option)
 Vue.use(Cascader)
 Vue.use(Alert)
-Vue.use(Cascader)
 Vue.use(Tabs)
 Vue.use(TabPane)
 // 导入弹框提示组件,这个组件需要全局挂载
