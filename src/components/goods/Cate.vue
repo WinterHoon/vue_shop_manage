@@ -87,6 +87,7 @@
         </el-form-item>
         <el-form-item label="父级分类：">
           <el-cascader
+            ref="cascader"
             v-model="selectedKeys"
             :options="parentCateList"
             :props="cascaderProps"
@@ -97,9 +98,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addCateDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addCate"
-          >确 定</el-button
-        >
+        <el-button type="primary" @click="addCate">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -172,7 +171,7 @@ export default {
         label: 'cat_name',
         children: 'children',
         expandTrigger: 'hover',
-                checkStrictly: true
+        checkStrictly: true
       },
       // 选中的父级分类的id数组
       selectedKeys: []
@@ -222,12 +221,16 @@ export default {
       this.parentCateList = res.data
     },
     parentCateChanged() {
-      console.log(this.selectedKeys);
+      // 选择后让下拉框隐藏
+      this.$refs.cascader.toggleDropDownVisible(false)
+      console.log(this.selectedKeys)
       // 如果 selectedKeys 数据中 length 大于0，证明选中了分类
       // 反之，就说明没有选中任何父级分类
       if (this.selectedKeys.length > 0) {
         // 父级分类的id
-        this.addCateForm.cat_pid = this.selectedKeys[this.selectedKeys.length - 1]
+        this.addCateForm.cat_pid = this.selectedKeys[
+          this.selectedKeys.length - 1
+        ]
         // 为当前分类的等级赋值
         this.addCateForm.cat_level = this.selectedKeys.length
         return
@@ -241,7 +244,10 @@ export default {
     addCate() {
       this.$refs.addCartFormRef.validate(async valid => {
         if (!valid) return
-        const {data: res} = await this.$http.post('categories', this.addCateForm)
+        const { data: res } = await this.$http.post(
+          'categories',
+          this.addCateForm
+        )
         if (res.meta.status !== 201) {
           return this.$message.error('添加分类失败！')
         }
@@ -249,7 +255,6 @@ export default {
         this.getCateList()
         this.addCateDialogVisible = false
       })
-
     },
     addCateDialogClosed() {
       this.$refs.addCartFormRef.resetFields()
@@ -266,6 +271,6 @@ export default {
   margin-top: 15px;
 }
 .el-cascader {
-  width: 100%
+  width: 100%;
 }
 </style>
