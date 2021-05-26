@@ -41,9 +41,38 @@
           <!-- 动态参数表格 -->
           <el-table :data="manyTableData" border stripe>
             <!-- 展开行 -->
-            <el-table-column type="expand"></el-table-column>
+            <el-table-column type="expand">
+              <template v-slot="slot">
+                <el-tag
+                  closable
+                  v-for="(item, i) in slot.row.attr_vals"
+                  :key="i"
+                  @close="handleClose(i, slot.row)"
+                  >{{ item }}</el-tag
+                >
+                <!-- 输入的文本框 -->
+                <el-input
+                  class="input-new-tag"
+                  v-if="slot.row.inputVisible"
+                  v-model="slot.row.inputValue"
+                  ref="saveTagInput"
+                  size="small"
+                  @keyup.enter.native="handleInputConfirm(slot.row)"
+                  @blur="handleInputConfirm(slot.row)"
+                >
+                </el-input>
+                <!-- 添加的按钮 -->
+                <el-button
+                  v-else
+                  class="button-new-tag"
+                  size="small"
+                  @click="showInput(slot.row)"
+                  >+ New Tag</el-button
+                >
+              </template>
+            </el-table-column>
             <!-- 索引列 -->
-            <el-table-column type="index">#</el-table-column>
+            <el-table-column label="#" type="index"></el-table-column>
             <el-table-column
               label="参数名称"
               prop="attr_name"
@@ -70,15 +99,49 @@
         </el-tab-pane>
         <!-- 添加静态属性面板 -->
         <el-tab-pane label="静态属性" name="only">
-          <el-button type="primary" size="mini" :disabled="isBtnDisabled" @click="addDialogVisible = true"
+          <el-button
+            type="primary"
+            size="mini"
+            :disabled="isBtnDisabled"
+            @click="addDialogVisible = true"
             >添加属性</el-button
           >
           <!-- 静态属性表格 -->
           <el-table :data="onlyTableData" border stripe>
             <!-- 展开行 -->
-            <el-table-column type="expand"></el-table-column>
+            <el-table-column type="expand">
+              <template v-slot="slot">
+                <!-- 循环渲染tag标签 -->
+                <el-tag
+                  closable
+                  v-for="(item, i) in slot.row.attr_vals"
+                  :key="i"
+                  @close="handleClose(i, slot.row)"
+                  >{{ item }}</el-tag
+                >
+                <!-- 输入的文本框 -->
+                <el-input
+                  class="input-new-tag"
+                  v-if="slot.row.inputVisible"
+                  v-model="slot.row.inputValue"
+                  ref="saveTagInput"
+                  size="small"
+                  @keyup.enter.native="handleInputConfirm(slot.row)"
+                  @blur="handleInputConfirm(slot.row)"
+                >
+                </el-input>
+                <!-- 添加的按钮 -->
+                <el-button
+                  v-else
+                  class="button-new-tag"
+                  size="small"
+                  @click="showInput(slot.row)"
+                  >+ New Tag</el-button
+                >
+              </template>
+            </el-table-column>
             <!-- 索引列 -->
-            <el-table-column type="index">#</el-table-column>
+            <el-table-column label="#" type="index"></el-table-column>
             <el-table-column
               label="属性名称"
               prop="attr_name"
@@ -239,7 +302,10 @@ export default {
     },
     async getParamsData() {
       if (this.selectedCateKeys.length !== 3) {
-        return (this.selectedCateKeys = [])
+        this.selectedCateKeys = [],
+        this.manyTableData = [],
+        this.onlyTableData = []
+        return 
       }
       // 根据所选分类的id，和当前所处的面板，获取对应的参数
       // console.log(this.selectedCateKeys);
@@ -254,6 +320,14 @@ export default {
       if (res.meta.status !== 200) {
         return this.$message.error('获取参数列表失败！')
       }
+
+      res.data.forEach(item => {
+        item.attr_vals = item.attr_vals ? item.attr_vals.split(' ') : []
+        // 控制文本框的显示与隐藏
+        item.inputVisible = false
+        // 文本框中输入的值
+        item.inputValue = ''
+      })
       console.log(res.data)
       if (this.activeName === 'many') {
         this.manyTableData = res.data
@@ -321,22 +395,67 @@ export default {
       })
     },
     async removeParams(attr_id) {
-      const confirmResult = await this.$confirm('此操作将永久删除该参数, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).catch(err => err)
+      const confirmResult = await this.$confirm(
+        '此操作将永久删除该参数, 是否继续?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).catch(err => err)
       // 用户取消了删除的操作
-    if (confirmResult !== 'confirm') {
-      return this.$message.info('已取消删除')
-    }      
-    const {data: res} = await this.$http.delete(`categories/${this.cateId}/attributes/${attr_id}`)
-    if (res.meta.status !== 200){
-      return this.$message.error('删除参数失败！')
-    }
-    this.$message.success('删除参数成功！')
-    this.getParamsData()
-
+      if (confirmResult !== 'confirm') {
+        return this.$message.info('已取消删除')
+      }
+      const { data: res } = await this.$http.delete(
+        `categories/${this.cateId}/attributes/${attr_id}`
+      )
+      if (res.meta.status !== 200) {
+        return this.$message.error('删除参数失败！')
+      }
+      this.$message.success('删除参数成功！')
+      this.getParamsData()
+    },
+    // 文本框失去了焦点或者按下了enter键都会触发
+    async handleInputConfirm(row) {
+      if (row.inputValue.trim().length === 0) {
+        row.inputValue = ''
+        row.inputVisible = false
+        return
+      }
+      // 如果没有return，则证明输入的内容，需要做后续处理
+      row.attr_vals.push(row.inputValue.trim())
+      row.inputValue = ''
+      row.inputVisible = false
+      this.saveAttrVals(row)
+    },
+    async saveAttrVals(row) {
+      const { data: res } = await this.$http.put(
+        `categories/${this.cateId}/attributes/${row.attr_id}`,
+        {
+          attr_name: row.attr_name,
+          attr_sel: row.attr_sel,
+          attr_vals: row.attr_vals.join(' ')
+        }
+      )
+      if (res.meta.status !== 200) {
+        return this.$message.error('修改参数失败！')
+      }
+      this.$message.success('修改参数成功！')
+    },
+    // 点击按钮展示文本输入框
+    showInput(row) {
+      row.inputVisible = true
+      // 让文本框自动获得焦点
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
+    },
+    // 删除对应的参数可选项
+    handleClose(i, row) {
+      row.attr_vals.splice(i, 1)
+      this.saveAttrVals(row)
     }
   }
 }
@@ -345,5 +464,11 @@ export default {
 <style lang="less" scoped>
 .cat_opt {
   margin: 15px 0;
+}
+.el-tag {
+  margin: 10px;
+}
+.input-new-tag {
+  width: 120px;
 }
 </style>
