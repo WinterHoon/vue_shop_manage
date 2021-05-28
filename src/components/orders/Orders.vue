@@ -103,18 +103,16 @@
       </span>
     </el-dialog>
     <!-- 物流信息对话框 -->
-    <el-dialog
-      title="提示"
-      :visible.sync="progressDialogVisible"
-      width="30%"
-    >
-      <span>这是一段信息</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="progressDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="progressDialogVisible = false"
-          >确 定</el-button
+    <el-dialog title="物流信息" :visible.sync="progressDialogVisible" width="50%">
+      <el-timeline>
+        <el-timeline-item
+          v-for="(activity, index) in progress"
+          :key="index"
+          :timestamp="activity.time"
         >
-      </span>
+          {{ activity.context }}
+        </el-timeline-item>
+      </el-timeline>
     </el-dialog>
   </div>
 </template>
@@ -145,7 +143,9 @@ export default {
           { required: true, message: '请填写详细地址', trigger: 'blur' }
         ]
       },
-      cityData: cityData
+      cityData: cityData,
+      // 物流信息
+      progress: []
     }
   },
   created() {
@@ -174,7 +174,12 @@ export default {
     showAddress() {
       this.addressDialogVisible = true
     },
-    showProgress() {
+    async showProgress() {
+      const { data: res } = await this.$http.get('/kuaidi/1106975712662')
+      if (res.meta.status !== 200) {
+        return this.$message.error('请求物流信息失败！')
+      }
+      this.progress = res.data
       this.progressDialogVisible = true
     },
     addressDialogClosed() {
