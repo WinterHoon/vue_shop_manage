@@ -11,17 +11,8 @@
       <el-row :gutter="20">
         <el-col :span="8">
           <!-- 搜索框区域 -->
-          <el-input
-            placeholder="请输入内容"
-            v-model="queryInfo.query"
-            clearable
-            @clear="getGoodsList"
-          >
-            <el-button
-              slot="append"
-              icon="el-icon-search"
-              @click="getGoodsList"
-            ></el-button>
+          <el-input placeholder="请输入内容" v-model="queryInfo.query" clearable @clear="getGoodsList">
+            <el-button slot="append" icon="el-icon-search" @click="getGoodsList"></el-button>
           </el-input>
         </el-col>
         <el-col :span="4">
@@ -32,10 +23,8 @@
       <el-table :data="goodsList" border stripe>
         <el-table-column type="index" label="#"> </el-table-column>
         <el-table-column prop="goods_name" label="商品名称"> </el-table-column>
-        <el-table-column prop="goods_price" label="商品价格(元)" width="95px">
-        </el-table-column>
-        <el-table-column prop="goods_weight" label="商品重量" width="70px">
-        </el-table-column>
+        <el-table-column prop="goods_price" label="商品价格(元)" width="95px"> </el-table-column>
+        <el-table-column prop="goods_weight" label="商品重量" width="70px"> </el-table-column>
         <el-table-column prop="add_time" label="创建时间" width="140px">
           <template v-slot="slotProps">
             {{ slotProps.row.add_time | dateFormat }}
@@ -44,17 +33,8 @@
         <!-- 操作列 -->
         <el-table-column prop="name" label="操作" width="130px">
           <template v-slot="slotProps">
-            <el-button
-              size="mini"
-              type="primary"
-              icon="el-icon-edit"
-            ></el-button>
-            <el-button
-              size="mini"
-              type="danger"
-              icon="el-icon-delete"
-              @click="removeGoodsById(slotProps.row.goods_id)"
-            ></el-button>
+            <el-button size="mini" type="primary" icon="el-icon-edit"></el-button>
+            <el-button size="mini" type="danger" icon="el-icon-delete" @click="removeGoodsById(slotProps.row.goods_id)"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -115,20 +95,16 @@ export default {
       this.getGoodsList()
     },
     async removeGoodsById(id) {
-      const confirmResult = await this.$confirm(
-        '此操作将永久删除该商品，是否继续？',
-        '提示',
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }
-      ).catch(err => err)
+      const confirmResult = await this.$confirm('此操作将永久删除该商品，是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err)
       if (confirmResult !== 'confirm') {
         return this.$message.info('已取消删除')
       }
       const { data: res } = await this.$http.delete('goods/' + id)
-      console.log(res);
+      console.log(res)
       if (res.meta.status !== 200) {
         return this.$message.error('删除商品失败！')
       }

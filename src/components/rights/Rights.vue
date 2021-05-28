@@ -15,9 +15,7 @@
         <el-table-column prop="level" label="权限等级">
           <template v-slot="slot">
             <el-tag v-if="slot.row.level === '1'">一级</el-tag>
-            <el-tag v-else-if="slot.row.level === '2'" type="success"
-              >二级</el-tag
-            >
+            <el-tag v-else-if="slot.row.level === '2'" type="success">二级</el-tag>
             <el-tag v-else type="warning">三级</el-tag>
           </template>
         </el-table-column>

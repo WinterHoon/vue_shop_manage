@@ -27,13 +27,11 @@ const routes = [
       { path: '/rights', component: Rights },
       { path: '/roles', component: Roles },
       { path: '/categories', component: Cate },
-      { path: '/params', component: Params},
-      { path: '/goods', component: GoodsList},
-      { path: '/goods/add', component: AddGoods},
-      { path: '/orders', component: Orders},
-      { path: '/reports', component: Reports}
-
-
+      { path: '/params', component: Params },
+      { path: '/goods', component: GoodsList },
+      { path: '/goods/add', component: AddGoods },
+      { path: '/orders', component: Orders },
+      { path: '/reports', component: Reports }
     ]
   }
 ]

@@ -14,13 +14,24 @@ import VueQuillEditor from 'vue-quill-editor'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
- 
-//老师的接口
+
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+
+// 老师的接口
 axios.defaults.baseURL = 'https://www.liulongbin.top:8888/api/private/v1/'
 // 评论区的接口
 // axios.defaults.baseURL = 'http://timemeetyou.com:8889/api/private/v1/'
+
+// 在request拦截器中，展示进度条 NProgress.start()
 axios.interceptors.request.use(config => {
+  NProgress.start()
   config.headers.Authorization = window.sessionStorage.getItem('token')
+  return config
+})
+// 在request拦截器中，隐藏进度条 NProgress.done()
+axios.interceptors.response.use(config => {
+  NProgress.done()
   return config
 })
 
@@ -34,7 +45,7 @@ Vue.use(VueQuillEditor)
 
 Vue.filter('dateFormat', function(originVal) {
   const date = new Date(originVal)
-  
+
   const y = date.getFullYear()
   const m = (date.getMonth() + 1 + '').padStart(2, '0')
   const d = (date.getDate() + '').padStart(2, '0')

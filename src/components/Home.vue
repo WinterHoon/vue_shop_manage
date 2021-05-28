@@ -10,18 +10,9 @@
     <el-container>
       <el-aside :width="isCollapse ? '64px' : '200px'">
         <div class="toggle-button" @click="toggleCollapse">|||</div>
-        <el-menu
-          background-color="#333744"
-          text-color="#fff"
-          active-text-color="#409eff"
-          :unique-opened="true"
-          :collapse="isCollapse"
-          :collapse-transition="false"
-          router
-          :default-active="activePath"
-        >
+        <el-menu background-color="#333744" text-color="#fff" active-text-color="#409eff" :unique-opened="true" :collapse="isCollapse" :collapse-transition="false" router :default-active="activePath">
           <!-- 一级菜单 -->
-          <el-submenu :index=" item.id + ''" v-for="item in menulist" :key="item.id">
+          <el-submenu :index="item.id + ''" v-for="item in menulist" :key="item.id">
             <!-- 一级菜单模板 -->
             <template slot="title">
               <!-- 图标 -->
@@ -30,8 +21,7 @@
               <span>{{ item.authName }}</span>
             </template>
             <!-- 二级菜单 -->
-            <el-menu-item :index="'/' + subItem.path" v-for="subItem in item.children" :key="subItem.id"
-            @click="saveNavState('/' + subItem.path)">
+            <el-menu-item :index="'/' + subItem.path" v-for="subItem in item.children" :key="subItem.id" @click="saveNavState('/' + subItem.path)">
               <!-- 二级菜单模板 -->
               <template slot="title">
                 <!-- 图标 -->
@@ -59,27 +49,25 @@ export default {
       menulist: [],
       // 左侧菜单图标对象
       menuIcons: {
-        '125': 'el-icon-s-custom',
-        '103': 'el-icon-view',
-        '101': 'el-icon-goods',
-        '102': 'el-icon-document',
-        '145': 'el-icon-data-line'
+        125: 'el-icon-s-custom',
+        103: 'el-icon-view',
+        101: 'el-icon-goods',
+        102: 'el-icon-document',
+        145: 'el-icon-data-line'
       },
       // 侧边栏是否折叠
       isCollapse: false,
       // 被激活的链接地址
       activePath: ''
-           
     }
   },
   created() {
     this.getMenuList()
-    console.log('home created');
+    console.log('home created')
     this.activePath = window.sessionStorage.getItem('activePath')
   },
   activated() {
-    console.log('home activated');
-    
+    console.log('home activated')
   },
   methods: {
     logout() {
@@ -87,7 +75,7 @@ export default {
       this.$router.push('/login')
     },
     async getMenuList() {
-      const {data: res} =await this.$http.get('menus')
+      const { data: res } = await this.$http.get('menus')
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.menulist = res.data
     },
