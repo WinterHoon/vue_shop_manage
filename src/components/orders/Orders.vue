@@ -48,11 +48,13 @@
               type="primary"
               icon="el-icon-edit"
               size="mini"
+              @click="showAddress"
             ></el-button>
             <el-button
               type="success"
               icon="el-icon-location"
               size="mini"
+              @click="showProgress"
             ></el-button>
           </template>
         </el-table-column>
@@ -69,10 +71,56 @@
       >
       </el-pagination>
     </el-card>
+    <!-- 修改地址对话框 -->
+    <el-dialog
+      title="修改地址"
+      :visible.sync="addressDialogVisible"
+      width="50%"
+      @close="addressDialogClosed"
+    >
+      <el-form
+        ref="addressFormRef"
+        :model="addressForm"
+        :rules="addressFormRules"
+        label-width="100px"
+      >
+        <el-form-item label="省市区/县" prop="address1">
+          <el-cascader
+            v-model="addressForm.address1"
+            :props="{ expandTrigger: 'hover' }"
+            :options="cityData"
+          ></el-cascader>
+        </el-form-item>
+        <el-form-item label="详细地址" prop="address2">
+          <el-input v-model="addressForm.address2"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addressDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addressDialogVisible = false"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
+    <!-- 物流信息对话框 -->
+    <el-dialog
+      title="提示"
+      :visible.sync="progressDialogVisible"
+      width="30%"
+    >
+      <span>这是一段信息</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="progressDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="progressDialogVisible = false"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import cityData from './citydata'
 export default {
   data() {
     return {
@@ -82,7 +130,22 @@ export default {
         pagesize: 10
       },
       ordersList: [],
-      total: 0
+      total: 0,
+      addressDialogVisible: false,
+      progressDialogVisible: false,
+      addressForm: {
+        address1: [],
+        address2: ''
+      },
+      addressFormRules: {
+        address1: [
+          { required: true, message: '请选择省市区县', trigger: 'blur' }
+        ],
+        address2: [
+          { required: true, message: '请填写详细地址', trigger: 'blur' }
+        ]
+      },
+      cityData: cityData
     }
   },
   created() {
@@ -107,9 +170,22 @@ export default {
     handleCurrentChange(newPage) {
       this.queryInfo.pagenum = newPage
       this.getOrdersList()
+    },
+    showAddress() {
+      this.addressDialogVisible = true
+    },
+    showProgress() {
+      this.progressDialogVisible = true
+    },
+    addressDialogClosed() {
+      this.$refs.addressFormRef.resetFields()
     }
   }
 }
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.el-cascader {
+  width: 100%;
+}
+</style>
