@@ -1,6 +1,7 @@
 const prodPlugins = []
 if (process.env.NODE_ENV === 'production') {
-  prodPlugins.push['transform-remove-console']
+  // 之前push后面用了[]中括号，难怪一直不起作用
+  prodPlugins.push('transform-remove-console')
 }
 
 
@@ -16,6 +17,7 @@ module.exports = {
         styleLibraryName: 'theme-chalk'
       }
     ],
+    // 'transform-remove-console'
     ...prodPlugins
   ]
 }
