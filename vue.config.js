@@ -1,10 +1,31 @@
 // // vue.config.js
-// module.exports = {
-//   devServer: {
-//     overlay: {
-//       warnings: true, //不显示警告
-//       errors: true	//不显示错误
-//     }
-//   },
-//   lintOnSave:true //关闭eslint检查
-// }
+module.exports = {
+  chainWebpack: config => {
+    // 发布模式
+    config.when(process.env.NODE_ENV === 'production', config => {
+      config.entry('app').clear().add('./src/main-prod.js')
+
+      config.set('externals', {
+        vue: 'Vue',
+        'vue-router': 'VueRouter',
+        axios: 'axios',
+        lodash: '_',
+        echarts: 'echarts',
+        nprogress: 'NProgress',
+        'vue-quill-editor': 'VueQuillEditor'
+      })
+    })
+    // 开发模式
+    config.when(process.env.NODE_ENV === 'development', config => {
+      config.entry('app').clear().add('./src/main-dev.js')
+    })
+  }
+
+  // devServer: {
+  //   overlay: {
+  //     warnings: true, //不显示警告
+  //     errors: true	//不显示错误
+  //   }
+  // },
+  // lintOnSave:true //关闭eslint检查
+}
