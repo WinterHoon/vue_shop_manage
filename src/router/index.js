@@ -40,6 +40,7 @@ const routes = [
   }
 ]
 const router = new VueRouter({
+  base: process.env.NODE_ENV === 'production' ? '/shopmanage/index/' : '/index/',
   routes
 })
 
