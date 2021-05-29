@@ -7,8 +7,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <link rel="icon" href="<%= BASE_URL %>favicon.ico">
   <title>
-    <%= htmlWebpackPlugin.options.title %>
+    <%= htmlWebpackPlugin.options.isProd ? '' : 'dev - ' %>电商后台管理系统
   </title>
+  <% if(htmlWebpackPlugin.options.isProd) { %>
   <!-- nprogress的样式表文件 -->
   <link href="https://cdn.bootcdn.net/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
   <!-- 富文本编辑器的样式表文件 -->
@@ -31,6 +32,8 @@
   <script src="https://cdn.jsdelivr.net/npm/vue-quill-editor@3.0.6/dist/vue-quill-editor.js"></script>
   <!-- element-ui的js文件 -->
   <script src="https://cdn.staticfile.org/element-ui/2.8.2/index.js"></script>
+
+  <% } %>
 </head>
 
 <body>
