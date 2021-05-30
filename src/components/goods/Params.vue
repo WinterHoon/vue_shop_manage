@@ -47,8 +47,8 @@
             <el-table-column label="参数名称" prop="attr_name"></el-table-column>
             <el-table-column label="操作">
               <template v-slot="slot">
-                <el-button @click="showEditDialog(slot.row.attrId)" size="mini" type="primary" icon="el-icon-edit">编辑</el-button>
-                <el-button size="mini" type="danger" icon="el-icon-delete" @click="removeParams(slot.row.attrId)">删除</el-button>
+                <el-button @click="showEditDialog(slot.row.attr_id)" size="mini" type="primary" icon="el-icon-edit">编辑</el-button>
+                <el-button size="mini" type="danger" icon="el-icon-delete" @click="removeParams(slot.row.attr_id)">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -251,6 +251,8 @@ export default {
       })
     },
     async showEditDialog(attrId) {
+      console.log(`attrId${attrId}`)
+      console.log(`cateId${this.cateId}`)
       // 查询当前参数的信息
       const { data: res } = await this.$http.get(`categories/${this.cateId}/attributes/${attrId}`, {
         params: { attr_sel: this.activeName }
@@ -258,6 +260,7 @@ export default {
       if (res.meta.status !== 200) {
         return this.$message.error('获取参数信息失败！')
       }
+      console.log(res.data)
       this.editForm = res.data
       this.editDialogVisible = true
     },
@@ -268,7 +271,8 @@ export default {
     editParams() {
       this.$refs.editFormRef.validate(async valid => {
         if (!valid) return
-        const { data: res } = await this.$http.put(`categories/${this.cateId}/attributes/${this.editForm.attrId}`, {
+        console.log(this.cateId)
+        const { data: res } = await this.$http.put(`categories/${this.cateId}/attributes/${this.editForm.attr_id}`, {
           attr_name: this.editForm.attr_name,
           attr_sel: this.activeName
         })
