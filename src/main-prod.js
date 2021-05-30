@@ -14,9 +14,9 @@ import VueQuillEditor from 'vue-quill-editor'
 import NProgress from 'nprogress'
 
 // 老师的接口
-axios.defaults.baseURL = 'https://www.liulongbin.top:8888/api/private/v1/'
+// axios.defaults.baseURL = 'https://www.liulongbin.top:8888/api/private/v1/'
 // 评论区的接口
-// axios.defaults.baseURL = 'http://timemeetyou.com:8889/api/private/v1/'
+axios.defaults.baseURL = 'http://timemeetyou.com:8889/api/private/v1/'
 
 // 在request拦截器中，展示进度条 NProgress.start()
 axios.interceptors.request.use(config => {
